@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
 from django.shortcuts import render, redirect
@@ -11,7 +12,7 @@ class UserRegisterView(View):
     template_name = 'account/register.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return redirect('home:index')
         else:
             return super().dispatch(request, *args, **kwargs)
@@ -36,7 +37,7 @@ class UserLoginView(View):
     template_name = 'account/login.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return redirect('home:index')
         else:
             return super().dispatch(request, *args, **kwargs)
@@ -59,7 +60,7 @@ class UserLoginView(View):
         return render(request, self.template_name, {'form': form})
 
 
-class UserLogoutView(View):
+class UserLogoutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         messages.success(request, "you've been logged out successfully", 'success')
