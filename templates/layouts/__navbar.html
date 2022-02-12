@@ -8,9 +8,16 @@
             <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="{% url 'account:register' %}">Register</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{% url 'account:login' %}">Login</a>
-            </li>
+            {% if not request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'account:login' %}">Login</a>
+                </li>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'account:logout' %}">Logout</a>
+                </li>
+            {% endif %} 
         </ul>
     </div>
 </nav>
