@@ -10,6 +10,12 @@ from django.contrib.auth import authenticate, login, logout
 class UserRegisterView(View):
     template_name = 'account/register.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return redirect('home:index')
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
         form = UserRegistrationForm()
         return render(request, self.template_name, {'form': form})
