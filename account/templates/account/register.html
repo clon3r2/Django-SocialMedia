@@ -3,7 +3,7 @@
 <div class="container">
 <div class="row justify-content-center">
     <h1 class="text-dark text-center">Registration Form</h1>
-    <form action="{% url 'account:index' %}" class="col-md-5" method="POST" novalidate>
+    <form action="{% url 'account:register' %}" class="col-md-5" method="POST" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
     <div class="text-center"><button class="btn btn-primary" type="submit">submit</button></div>
