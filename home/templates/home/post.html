@@ -3,8 +3,11 @@
     <p>
         <h1>{{ post.name }}</h1>
         <h6 style="color:gray">{{ post.created }}</h6>
-        <h6 style="color:green">{{ post.user.username }}</h6>
+        <a href="{% url 'account:profile' post.user.id %}"><h6 style="color:green">{{ post.user.username }}</h6></a>
         <hr>
         <p>{{ post.body }}</p>
+        {% if request.user.id == post.user.id %}
+            <a href="{% url 'home:delete-post' post.id %} "><button class="btn btn-danger">Delete</button></a>
+        {% endif %}
     </p>
 {% endblock %}
