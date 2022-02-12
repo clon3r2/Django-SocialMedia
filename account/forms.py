@@ -31,3 +31,7 @@ class UserRegistrationForm(forms.Form):
         if password and confirm and password != confirm:
             raise ValidationError('Password is not match !')
 
+
+class UserLoginForm(forms.Form):
+    username = forms.CharField(label='username', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(label='password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
