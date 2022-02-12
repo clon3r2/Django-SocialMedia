@@ -1,4 +1,9 @@
 {% extends '_base.html' %}
 {% block Contents %}
     salam bar to
+    <div class="card">
+        {% for post in posts %}
+            <a href="{% url "home:post" post.id post.slug %}" class="card-body">{{ post.body|truncatewords:8 }}</a>
+        {% endfor %}
+    </div>
 {% endblock %}
