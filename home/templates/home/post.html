@@ -1,0 +1,10 @@
+{% extends '_base.html' %}
+{% block Contents %}
+    <p>
+        <h1>{{ post.name }}</h1>
+        <h6 style="color:gray">{{ post.created }}</h6>
+        <h6 style="color:green">{{ post.user.username }}</h6>
+        <hr>
+        <p>{{ post.body }}</p>
+    </p>
+{% endblock %}
