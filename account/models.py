@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 
 class Relation(models.Model):
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
-    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followings')
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
