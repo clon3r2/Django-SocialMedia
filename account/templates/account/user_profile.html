@@ -1,6 +1,7 @@
 {% extends '_base.html' %}
 {% block Contents %}
     <h2 class="text-center text-primary">{{ user.username }}</h2>
+
     <div class="card">
         {% for post in posts %}
             <a href="{{ post.get_absolute_url }}" class="card-body">{{ post.body|truncatewords:8 }}</a>
@@ -8,6 +9,11 @@
     </div>
     {% if request.user.id == user.id %}
         <a href="{% url 'home:create-post' %}"><button class="btn btn-primary">New Post</button></a>
-    {% endif %} 
+    {% endif %}
+    {% if request.user.id != user.id and not is_following %}
+        <a href="{% url 'account:follow' user.id %}"><button class="btn btn-primary">Follow</button></a>
+    {% elif request.user.id != user.id and is_following %}
+        <a href="{% url 'account:unfollow' user.id %}"><button class="btn btn-warning">Unfollow</button></a>
+    {% endif %}
 
 {% endblock %}
