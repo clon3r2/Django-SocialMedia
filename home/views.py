@@ -3,8 +3,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views import View
 from .models import Post
-from .forms import PostUpdateForm
+from .forms import PostCreateUpdateForm
 from django.utils.text import slugify
+
 
 class HomeView(View):
     template_name = 'home/index.html'
@@ -37,7 +38,7 @@ class PostDeleteView(LoginRequiredMixin, View):
 
 
 class PostUpdateView(LoginRequiredMixin, View):
-    form_class = PostUpdateForm
+    form_class = PostCreateUpdateForm
     template_name = 'home/update-post.html'
 
     def setup(self, request, *args, **kwargs):
@@ -46,7 +47,7 @@ class PostUpdateView(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         post = self.post_instance
-        if not request.user.id == post.user.id :
+        if not request.user.id == post.user.id:
             messages.error(request, 'You cant update this post', 'danger')
             return redirect('home:index')
         else:
@@ -68,4 +69,20 @@ class PostUpdateView(LoginRequiredMixin, View):
             return redirect('home:post', post.id, post.slug)
 
 
+class PostCreateView(View):
+    class_form = PostCreateUpdateForm
+    template_url = 'home/create-post.html'
 
+    def get(self, request):
+        form = self.class_form()
+        return render(request, self.template_url, {'form': form})
+
+    def post(self, request):
+        form = self.class_form(request.POST)
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.slug = slugify(form.cleaned_data['body'][:30])
+            new_post.user = request.user
+            new_post.save()
+            messages.success(request, 'post created successfully')
+            return redirect('home:post', new_post.id, new_post.slug)
