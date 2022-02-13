@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import views as auth_views
+from .models import Relation
 
 
 class UserRegisterView(View):
@@ -72,9 +73,13 @@ class UserProfileView(LoginRequiredMixin, View):
     template_name = 'account/user_profile.html'
 
     def get(self, request, user_id):
+        is_following = False
         user = get_object_or_404(User, pk=user_id)
+        relation = Relation.objects.filter(from_user=request.user, to_user=user)
+        if relation.exists():
+            is_following = True
         posts = user.posts.all()
-        return render(request, self.template_name, {'user': user, 'posts': posts})
+        return render(request, self.template_name, {'user': user, 'posts': posts, 'is_following': is_following})
 
 
 class UserPasswordResetView(auth_views.PasswordResetView):
@@ -94,3 +99,28 @@ class UserPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class UserPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = 'account/password_reset_complete.html'
+
+
+class UserFollowingView(LoginRequiredMixin, View):
+    def get(self, request, user_id):
+        target_user = User.objects.get(id=user_id)
+        relation = Relation.objects.filter(from_user=request.user, to_user=target_user)
+        if relation.exists():
+            messages.error(request, 'you already have this guy on ur followings.', 'danger')
+        else:
+            Relation(from_user=request.user, to_user=target_user).save()
+            messages.success(request, 'you followed this guy successfully.', 'success')
+        return redirect('account:profile', target_user.id)
+
+
+class UserUnFollowingView(LoginRequiredMixin, View):
+    def get(self, request, user_id):
+        target_user = User.objects.get(id=user_id)
+        relation = Relation.objects.filter(from_user=request.user, to_user=target_user)
+        if relation.exists():
+            relation.delete()
+            messages.success(request, 'you unfollowed this guy', 'success')
+        else:
+            messages.error(request, 'you have not this user in ur followings', 'danger')
+        return redirect('account:profile', target_user.id)
+
